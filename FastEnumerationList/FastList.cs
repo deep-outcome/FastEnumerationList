@@ -17,20 +17,22 @@ public class FastList<T> : List<T>, IEnumerable<T>
 
   public FastList ( int capacity ) : base (capacity) { }
 
-  IEnumerator<T> IEnumerable<T>.GetEnumerator () => new FastEnumerator (Items);
+  new public IEnumerator<T> GetEnumerator () => new FastEnumerator (Items, Count);
+  IEnumerator IEnumerable.GetEnumerator () => ((IEnumerable<T>) this).GetEnumerator ();
 
-  new public IEnumerator GetEnumerator () => ((IEnumerable<T>) this).GetEnumerator ();
-
-  sealed public class FastEnumerator : IEnumerator<T>
+  sealed public class FastEnumerator ( T [] items, int count ) : IEnumerator<T>
   {
-    T[] items;
+    readonly T[] items = items;
+    readonly int count = count;
     int index;
-
-    public FastEnumerator ( T [] items ) => this.items = items;
 
     public void Dispose () { }
 
-    public bool MoveNext () => ++index < items.Length;
+    public bool MoveNext ()
+    {
+      int count = this.count;
+      return ++index < count;
+    }
 
     public T Current => items [index];
 

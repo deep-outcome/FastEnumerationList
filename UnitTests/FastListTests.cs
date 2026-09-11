@@ -1,5 +1,7 @@
 using FastEnumerationList;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,6 +28,22 @@ public class FastListTests
     var fastListDeclared = new FastList<int>();
 
     Assert.AreNotEqual (GetListEnumeratorType<int> (), fastListDeclared.GetEnumerator ().GetType ());
+    Assert.AreEqual (typeof (FastList<int>.FastEnumerator), fastListDeclared.GetEnumerator ().GetType ());
+  }
+
+  [TestMethod]
+  public void GetEnumerator_ProperlyEnumerates ()
+  {
+    IEnumerable<int> source = Enumerable.Range(0, 1000);
+    FastList<int> fastListDeclared = new (1_000_000);
+    fastListDeclared.AddRange (source);
+
+    EnumerableEnumerator<int> enumerable = new (fastListDeclared.GetEnumerator());
+
+    List<int> listDeclared = new FastList<int>();
+    listDeclared.AddRange (source);
+
+    Assert.IsTrue (enumerable.SequenceEqual (listDeclared));
   }
 
   static Type GetListEnumeratorType<T> () => new List<T> ().GetEnumerator ().GetType ();
@@ -47,10 +65,9 @@ public class FastListTests
 
     var arrayTimes_For_Unsafe = new List<TimeSpan>();
 
-    long[] numbers = Enumerable
+    long[] numbers = [.. Enumerable
         .Range(0, 500_000)
-        .Select(Convert.ToInt64)
-        .ToArray();
+        .Select(Convert.ToInt64)];
 
     long refSum = checked(numbers.Sum());
     var stopWatch = new Stopwatch();
@@ -106,17 +123,17 @@ public class FastListTests
 
     string result = strBuilder.ToString();
 
-    File.AppendAllText (@"c:\Users\JC\Desktop\res.txt", result);
+    File.AppendAllText ("./res.txt", result);
 
     Debug.Write (result);
 
-    Assert.IsTrue (listTimes_Foreach_Sum > fastListTimes_Foreach_Sum);
-    Assert.IsTrue (array_Foreach_Sum > fastListTimes_Foreach_Sum);
+    Assert.IsGreaterThan (fastListTimes_Foreach_Sum, listTimes_Foreach_Sum);
+    Assert.IsGreaterThan (fastListTimes_Foreach_Sum, array_Foreach_Sum);
   }
 
   static void DiscardMinMaxValues ( List<TimeSpan> timeSpans )
   {
-    if (!timeSpans.Any ()) { return; }
+    if (timeSpans.Count == 0) { return; }
 
     TimeSpan max = timeSpans.Max();
     TimeSpan min = timeSpans.Min();
