@@ -15,8 +15,8 @@
     <Copyright>Verbal consent needed.</Copyright>    
     <AssemblyName>Software9119.FastEnumerationList</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
-    <Version>4.0.0</Version>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <Version>4.0.1</Version>
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
     <UserSecretsId>aa92bd68-ea6c-4e98-a6fb-c1c2d65ed617</UserSecretsId>
   </PropertyGroup>
 

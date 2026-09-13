@@ -31,7 +31,7 @@ public class FastList<T> : List<T>, IEnumerable<T>
     public bool MoveNext ()
     {
       int count = this.count;
-      return ++index < count;
+      return index < count && ++index < count;
     }
 
     public T Current => items [index];
